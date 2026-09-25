@@ -7,29 +7,33 @@
     <link href="css/main.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
-   <div class="page">
+    <div class="page">
         <div class="header">
             <h1>Edward Chernysh</h1>
         </div>
         
         <div class="main">
-		<!-- Credential Summary Box -->
-<div class="credential-box">
-    <div class="credential-main">
-        <span class="credential-degree">Ph.D. in Mathematics</span>
-        <span class="credential-sep">•</span>
-        <span class="credential-org">McGill University (2026)</span>
+            <!-- Credential Summary Box -->
+            <div class="credential-box">
+                <div class="credential-main">
+                    <span class="credential-degree">Ph.D. in Mathematics</span>
+                    <span class="credential-sep">•</span>
+                    <span class="credential-org">McGill University (2026)</span>
+                </div>
+                <div class="credential-details">
+                    <span class="credential-label">Dissertation:</span>
+                    <a href="chernyshPhD.pdf" class="credential-thesis-link" target="_blank">A Global Compactness Theory for Critical Caffarelli–Kohn–Nirenberg Problems and Applications</a>
+                </div>
+		<div class="credential-details" style="margin-top: 0.35rem;">
+        <span class="credential-label">Computing:</span> C/C++, C#, Java, LaTeX &nbsp;•&nbsp; <a href="https://github.com/chernyshe" target="_blank" rel="noopener">chernyshe.github</a>
     </div>
-    <div class="credential-details">
-        <span class="credential-label">Dissertation:</span>
-        <a href="chernyshPhD.pdf" class="credential-thesis-link" target="_blank">A Global Compactness Theory for Critical Caffarelli–Kohn–Nirenberg Problems and Applications</a>
-    </div>
-</div>
+            </div>
+
             <p>
                 <b>About me:</b> 
                 I am a mathematician specializing in geometric analysis, working primarily at the intersection of non-linear <a href="https://en.wikipedia.org/wiki/Partial_differential_equation" target="_blank" rel="noopener">partial differential equations</a> and <a href="https://en.wikipedia.org/wiki/Functional_analysis" target="_blank" rel="noopener">functional analysis</a>. I completed my PhD at McGill University in May 2026 under the supervision of Professors <a href="https://www.math.mcgill.ca/vetois/" target="_blank" rel="noopener">Jérôme Vétois</a> and <a href="https://www.math.mcgill.ca/guan/" target="_blank" rel="noopener">Pengfei Guan</a>. 
 
-		My research centers on weighted quasilinear critical elliptic equations and geometric problems exhibiting a loss of compactness. My most recent work involves questions of existence, multiplicity, and symmetry prescription for Caffarelli–Kohn–Nirenberg problems.
+                My research centers on weighted quasilinear critical elliptic equations and geometric problems exhibiting a loss of compactness. My most recent work involves questions of existence, multiplicity, and symmetry prescription for Caffarelli–Kohn–Nirenberg problems.
             </p>
 
             <p><b><a href="chernysheCV.pdf">Curriculum Vitae</a></b> &nbsp;•&nbsp; <b>Email:</b> edward.chernysh(at)mail.mcgill.ca</p>
@@ -52,8 +56,16 @@
                 </div>
             </div>
 
-            <p>My PGP Public Key (also available as a <a href="chernyshe_pub.asc">.asc</a> file):</p>
-            <textarea readonly rows="14" style="resize:none">
+            <!-- COLLAPSIBLE PGP PUBLIC KEY -->
+            <details class="repo-group pgp-container">
+                <summary class="repo-group-title">
+                    PGP Public Key <span class="repo-count">(0xCF5689E47AAF5905)</span>
+                </summary>
+                <div class="pgp-content">
+                    <p class="pgp-download-line">
+                        Download raw key file: <a href="chernyshe_pub.asc" download>chernyshe_pub.asc</a>
+                    </p>
+                    <textarea readonly rows="14" style="resize:none">
 -----BEGIN PGP PUBLIC KEY BLOCK-----
 
 mQINBGq0Mb8BEADA7MTujfvMlB6t8gGh0kZJmzsPgHrTZ8Xw7tlb5T54ane3ZNp3
@@ -107,8 +119,15 @@ CarTuZecN3aVBIvoF7ShEqCzowpUCUws5lsUle8v5XhrZV2Bwb1tdZ/CNSS2/uMG
 yJrYvJiASknCDQ==
 =cfDX
 -----END PGP PUBLIC KEY BLOCK-----
-            </textarea> 
+                    </textarea>
+                </div>
+            </details>
+	    <footer class="site-footer">
+            <span class="footer-copy">&copy; 2026 Edward Chernysh</span>
+            <span class="footer-sep">•</span>
+            <a href="http://cs.mcgill.ca/~echern2/" class="footer-link" target="_blank" rel="noopener">Legacy Site Archive</a>
+        </footer>
         </div>
-    </div>
+         </div>
 </body>
 </html>
