@@ -1,0 +1,588 @@
+%% VERY BASIC LATEX PROBLEM SET SOLUTIONS FORMAT%%
+%% AVAILABLE WITHOUT WARRANTY %%
+%% AVAILABLE WITHOUT LICENSE %%
+
+\documentclass[9pt]{article} %% TRY NOT TO CHANGE DOC-TYPE (feel free to change font size)
+
+\usepackage{lipsum}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{amssymb}
+\usepackage{pgfplots}
+\usepackage{wasysym}
+\usepackage{tikz}
+\usepackage[]{algorithm2e}
+\usepackage[margin=1.2in]{geometry}
+\hypersetup{
+	colorlinks,
+	citecolor=black,
+	filecolor=black,
+	linkcolor=red,
+	urlcolor=blue
+}
+\usepackage{listings}
+\lstset{language=Java}
+
+%% USEFUL COMMANDS
+\newtheorem*{def_}{Definition}
+\newtheorem*{axiom}{Axiom}
+\newtheorem{prop}{Proposition}
+\newtheorem*{ind}{The Principle of Mathematical Induction}
+\newcommand{\NN}{\mathbb{N}} %% \NN (set of naturals) 
+\newcommand{\ZZ}{\mathbb{Z}} %% \ZZ (set of integers) 
+\newcommand{\QQ}{\mathbb{Q}} %% \QQ (set of rationals) 
+\newcommand{\RR}{\mathbb{R}} %% \RR (set of reals) 
+\newcommand{\CC}{\mathbb{C}} %% \CC (set of complex numbers) 
+\newtheorem{ex}{Example}
+\newcommand{\A}{\mathcal{A}}
+\newcommand{\C}{\mathcal{C}}
+\newcommand{\B}{\mathcal{B}}
+\newcommand{\T}{\mathcal{T}}
+\newcommand{\G}{\mathcal{G}}
+
+%% THIS IS THE PROBLEM ENVIRONMENT
+\newcounter{problem}[section]
+\newenvironment{problem}[1][]{\refstepcounter{problem}\par\bigskip
+	\noindent\textbf{Problem \theproblem. #1}}\medskip
+
+%% TITLE, AUTHOR AND DATE (HEADERS and FOOTERS too)%%
+\pagestyle{fancy}
+\title{Notes on Abstract Data Types, Sorting Algorithms and Discrete Structures}
+\author{Edward Chernysh}
+\date{}
+\lhead{E. Chernysh}
+\rhead{ADTs and Sorting}
+\cfoot{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+\tikzset{
+	treenode/.style = {align=center, inner sep=0pt, text centered,
+		font=\sffamily},
+	arn_n/.style = {treenode, circle, white, font=\sffamily\bfseries, draw=black,
+		fill=black, text width=1.5em},% arbre rouge noir, noeud noir
+	arn_r/.style = {treenode, circle, red, draw=red, 
+		text width=1.5em, very thick},% arbre rouge noir, noeud rouge
+	arn_x/.style = {treenode, rectangle, draw=black,
+		minimum width=0.5em, minimum height=0.5em}% arbre rouge noir, nil
+}
+
+\begin{document}
+	\maketitle
+	%\noindent \textbf{Sorting Algorithms}\label{insertion_sort}
+	\section{\large Sorting Algorithms}
+	\begin{lstlisting}
+insertionSort(int[] input) {
+	int temp = 0, j = 0;
+	if (input == null || input.length <= 1)
+		return input;
+	
+	for (int i = 1; i < input.length; i++) {
+		temp = input[i];
+		j = i;
+		while (j > 0 && temp < input[j-1]) {
+			int alt = input[j-1];
+			input[j-1] = temp;
+			input[j] = alt;
+			j--;
+		}
+	}
+	return input;
+}
+	\end{lstlisting}
+	We consider the \emph{MergeSort} algorithm. This algorithm operates via divide-and-conquer. Generally, this algorithm will take an array $A$ divide it in half, recursively sort each half and merge them. Let $T(n)$ be the function describing run-time complexity of merge sort. Note that
+	$$ T(n) = \begin{cases}
+		0 & n = 1 \\
+		2T(\frac{n}{2}) + n
+	\end{cases} $$
+	Thus $T(n) \in \mathcal{O}(n\log{n})$. We will be able to prove this elegantly once we develop the \emph{Master Theorem} below.
+	\section{\large The Master Theorem}
+		The master theorem is used to solve many reccurence relations. That is, equation of the form 
+		$$ T(n) = aT\left(\frac{n}{b}\right) + f(n) $$
+		Where the constants $a\geq 1, b > 1$ and $f > 0$ are the number of sub-instances, number of divisions and merge-time respectively. The cases are as follows:
+		\begin{center}
+		\begin{tabular}{ | c | c | c |}
+			\hline
+			\textbf{Case} \# & \textbf{Condition} & \textbf{Solution} \\
+			 
+			(1) & $f(n) \in \mathcal{O}^L$ where $L < \log_b{a}$ & $T(n) \in \Theta(n^{\log_b{a}})$ \\
+			(2) & $f(n) \in \Theta(n^{\log_b{a}}\log^k{n})$ for $k \geq 0$ & $T(n) \in \Theta(n^{\log_b{a}}\log^{k+1}{n})$ \\
+			(3) & $f(n) \in \Omega(n^L)$ for $L > \log_b{a}$ and $f(n)$ is \emph{regular} & $T(n) \in \Theta(f(n))$\\
+			\hline
+		\end{tabular}
+		$$ $$
+		\noindent \emph{Regularity}: A function $f: \NN \rightarrow \RR$ is said to be regular if there exists $c < 1$ and $N \in \NN$ such that for all $n \geq N$ we have $af(n/b) \leq cf(n)$
+		\end{center}
+		
+	Let us now consider some examples of problems to which these may be applied.
+	\begin{enumerate}
+		\item $T(n) = 5T(n/2) + \Theta(n^2)$. Here all we know is $f(n) \in \Theta(n^2)$. Thankfully this is sufficient to solve the relation. Note that $L 2 < \log_b{a} = \log_2{5} \approx 2.25$. Thus, Case 1 applies here. Hence, we have by the table above that $T(n) \in \Theta(n^{\lg{5}})$
+		
+		\item $T(n) = 27 T(n/3) + \Theta(n^3\log{n})$. In this case, $\log_b{a} = \log_3{27} = 3$. Indeed, $f(n) \in \Theta(n^{\log_b{a}}\log^k{n})$ where $k = 1$. Hence, by case 2 it follows that 
+		$$ T(n) \in \Theta(n^3\log^2{n})$$
+		
+		\item $T(n) = 5T(n/2) + \Theta(n^3)$. In this case $\log_b{a} = \log_2{a} \approx 2.25 < L = 3$. Indeed, $f(n) \in \Omega(n^3)$ and hence $L > \log_2{5}$. We only need to prove regularity. Consider:
+		$$ af(n/b) = 5\left(\frac{n}{2}\right)^3 =  \frac{5}{8} n^3 $$
+		Taking $c = 5/8 < 1$ and $n = 1$ we have regularity. Hence, by case (3) of the master theorem it follows that
+		$$ T(n) \in \Theta(n^3) $$
+	\end{enumerate}
+	
+	\noindent \textbf{Divide and Conquer Paradigms} \\
+	
+	This approach to problem solving involves breaking the problem apart into smaller pieces, recursively solving each half and recombining. More often than not, one will divide the problem into two sub-pieces each recursion. Let us now consider the \emph{Binary Search Algorithm}. This algorithm takes as input the following quadruple: $(A, v, low, high)$ where $A$ is a sorted array of integers, $v \in \ZZ$ the value we are searching for and $low$ and $high$ the incides of the array being considered. We will break this problem apart into sub-problems as below:
+	\begin{lstlisting}
+int binarySearch(int[] A, int v, int low, int high) {
+	if (high == low)
+		if (A[low] == v)
+			return low;
+		else return (-1);
+	
+	int breakpoint = (int)(high-low)/2;
+	if (v <= A[breakpoint])
+		return binarySearch(A, v, low, breakpoint);
+	else
+		return binarySearch(A,v, breakpoint + 1, high);
+}
+	\end{lstlisting}
+	This algorithm will break down the problem until a singleton is left, at this point it will check an dsee whether or not this $\{\nu\} = v$. It will either return the position in $A$ or an EOF marker to signal that no such element can be found in the array. Until that point, it will divide the array into two half (these halfs may differ by 1). It will check the end point of the lower half and determine whether the element can be found in it. If not we discard this and explore the other half recursively. It is important to note that this is only made possible by the fact that the array is already sorted. \\
+	
+	We offer a brief analysis of this search algorithm. In the case where $A$ is a singleton, it takes constant time since we only need to check if this element corresponds to the target of the search. Otherwise, we divide it into two halves, but make 1 comparison to decide which half to explore. Hence, this results in the following recursion
+	$$	
+		T(n) = \begin{cases} 1 & n =1 \\ T \left( \frac{n}{2} \right)+ 1 & n > 1\end{cases}
+	$$
+	This corresponds the second case of the Master Theorem, to see this note that $\log_b{a} = \log_2{1} = 0$. Hence $n^0 \log^0{n} = 1$ and hence the criterion for case (2) is satisfied. Thus, $T(n) \in \Theta(\log{n})$.
+	%\noindent \textbf{Linked Lists} \label{linked}\\
+	\section{\large Linked Lists}
+	
+	We begin by defining a node class that will serve as a storage device for the objects in question. Most of all, they will contain pointers to other nodes that serve as the structural component of these lists. It is important to note that the node class with vary with data types, for instance a node used in a DLinkedList with have one extra pointer than that used in an SLinkedList. We will present and distinguish these types of nodes as we proceed. For now, consider the following data type:
+	\label{node_slist}
+	\begin{lstlisting}
+// Node for SLinked List
+class Node<T> {
+	Node next;
+	T object;
+}
+\end{lstlisting}
+
+Having defined this object, it is easy to implement a \emph{Singly Linked List} by defining the following:
+\begin{lstlisting}
+class SLinkedList<T> {
+	Node head, tail;
+	int size;
+}
+\end{lstlisting}
+Obviously you can define a constructor that best suits the situation you are working with so we will neglect this in this text. Moreover, storage of the nodes is best done in an array like structure, although this not \emph{required}, since you could generate new nodes dynamically throughout your algorithm and have them connected only by the pointers within the nodes. Given this structure we can define some algorithms that handle addFirst(), removeFirst(), addLast(), removeLast() described below, where we assume the given methods live within the class as public methods that can access the Object:
+
+\begin{lstlisting}
+void addFirst(Node<T> x) {
+	x.next = this.head;
+	this.head = x;
+	(this.size)++;
+}
+
+Node<T> removeFirst() {
+	Node<T> first = this.head;
+	this.head = this.head.next;
+	first.next = null;
+	return first;
+	--(this.size);
+}
+
+void addLast(Node<T> x) {
+	this.tail.next = x;
+	this.tail = this.tail.next;
+	this.size++;
+	
+}
+
+Node<T> removeLast() {
+	Node<T> last = this.tail;
+	if (this.head == this.tail) {
+		this.head = null;
+		this.size = 0;
+		return last;
+	}
+	
+	Node<T> ptr = this.head;
+	while(ptr.next != this.tail)
+		ptr = ptr.next;
+	ptr.next=null;
+	this.tail = ptr;
+	(this.size)--;
+	
+}
+	\end{lstlisting}
+	%% BODY %%
+	We extend these concepts towards \emph{doubly linked lists} which we hereby refer to as DLinkedLists. We implement the same methods, however we modify the node as follows:
+	
+	\begin{lstlisting}
+		class Node<T> {
+			T object;
+			Node<T> previous, next;
+		}
+	\end{lstlisting}
+	The list structure remains identical:
+	\begin{lstlisting}
+	class DLinkedList<T> {
+		int size;
+		Node<T> head, Node<T> tail;
+	}
+	\end{lstlisting}
+	Under these new axioms we consider the same methods in this context:
+	%\newpage %% a new page command is found [HERE]
+	\begin{lstlisting}
+Node<T> getNode(int index) {
+	if (i < size/2) {
+		Node<T> ptr = this.head;
+		for (int i= 0; i < index; i++)
+			ptr = ptr.next;
+		return ptr;
+	}
+	else {	
+		Node<T> ptr = this.tail;
+		int pos = this.size -1;
+		while (pos > i) {
+			ptr = ptr.previous;
+			i--;
+		}
+		return ptr;
+	}
+}
+
+Node<T> remove (Node<T> node) {
+	node.next.previous = node.previous;
+	node.previous.next = node.next;
+	(this.size)--;
+	return node;
+} 
+	\end{lstlisting}
+	In general, methods will follow this structure. Another important question arises...how should one implement this on a machine? Again, as stated previously it is possible to simply have \emph{free} nodes in space, linked to each other only by the pointers they each carry. In fact, this is my preferred approach. Unfortunately, some claim this is a bad idea. Often one creates an array with a fixed ceiling for size and sets all posiitions to be \textbf{null}, and will use this as a container for the nodes themselves. Often an ArrayList will be more useful, particualrly when the task at hand may require frequently changing the \emph{value} of elements at known positions. \\
+	
+%	\noindent \textbf{Stacks and Queues}\\
+	\section{\large Stacks and Queues}
+	We will consider two very useful abstract data types that are used when searching discrete graphs and structures. We will see applications of these later in the following section. We now define a \textbf{stack}.
+	\begin{def_}
+		A \textbf{stack} is a container that stores objects together with the following:
+			\begin{itemize}
+				\item Objects can be pushed(added) to the top at any time.
+				\item Only the top of the stack (the object most recently added) can be popped (removed).
+				\item These two operations are denoted push(o), pop(). Moreover, many implementations carry size(), isEmpty() and a top() method which peaks at the top without removing the object.
+			\end{itemize}
+	\end{def_}
+		
+	Consider the following string: $3 + (4-1) \star 7 + (6-2 \star (2+3))$. One can use a stack to evaluate this string whilst respecting the cinventions of arithmetic. To see this, we describe the stack in question as follows
+	\begin{lstlisting}
+	
+                    + +
+                ( ( ( (
+              * * * * * *
+              - - - - - - - - -
+	  ( ( ( ( ( ( ( ( ( ( (
+	+ + + + + + + + + + + + + _
+	\end{lstlisting}
+	
+	Now we proceed to examine another abstract structure called a Queue. This operates in a similar, but antagonistic way to the stack. We give a crucial definition below:
+	\begin{def_}
+		Let $\mathcal{O}$ be a collection of objects and $\sigma \in \mathcal{O}$. A Queue is an abstract structure equipped with two fundamental operations and 3 defined methods:
+		\begin{itemize}
+			\item enqueue($\sigma$) - which adds the object to the back of the underlying structure.
+			\item dequeue - which "pops" the element off the top of the container.
+			\item Methods size(), is Empty() and front() which allows peeking as before.
+		\end{itemize}
+	\end{def_}
+	\noindent \underline{Remark}: One should take note that adding elements to the "back" and popping elements off the "front" implies that we can only grab the element that has spent the most time in our list. Hence, priority is given to older objects. Hence the name \emph{Queue}. \\
+	
+	%\noindent \textbf{Induction \& Recursion}: \\
+	\section{\large Induction and Recursion}
+	
+	The principle of mathematical induction relies on a crucial axiom. Although, this axiom should be intuitively obvious. This is a consequence of the fact that $\NN$ is closed and bounded below.
+	\begin{axiom}[Well Ordering Axiom]
+		Any non-empty subset of $\NN$ has a least element.
+	\end{axiom}
+	With this in mind, we can now construct (or more appropriately \emph{prove}) a crucial tool for mathematics and computer science. This will be extremely useful when dealing with recurrence relations. 
+	\begin{ind}
+		Let $P_i$ be a propositional statement for $i \in \NN$. Suppose futher:
+		\begin{enumerate}
+				\item $P_1$ is true.
+				\item $P_n$ true implies $P_{n+1}$ is true for all $n \in \NN$.
+		\end{enumerate}
+		Then $P_n$ is true for all $n \in \NN$.
+	\end{ind}
+	\begin{proof}
+		We argue by contradiction. Suppose that $P_n$ is not true for all $n \in \NN$, then $P_N$ is false for some $N \in \NN$. Moreover, by hypothesis that $P_1$ is true, we have that $N > 1$. Define now the set
+		$$ \mathcal{P} := \{n \in \NN \mid P_n \text{ is false}\}$$
+		Indeed, $N \in \mathcal{P}$ by assumption and hence $\mathcal{P}$ is a non-empty subset of $\NN$. It then follows from the \emph{Well Ordering Axiom} that $\mathcal{N}$ has a least element $m \in \NN$. That is, for all $n < m$ we have that $P_n$ holds true. In particular, $m-1 < m$ implies $P_{m-1}$ is true. By (2) this implies $P_m$ is true. Contradiction.
+	\end{proof}
+	
+	\noindent \emph{Example}. Show that for $x > -1$ one has for all $n \in \NN$ that: $(1+x)^n \geq 1 + xn$. This is known as \emph{Bernouilli's Inequality}. \\
+	
+	\emph{Proof}. For $n=1$ we have $(1+x)^1 = 1+x = 1 + 1\cdot x$ which is obviously true. By way of induction suppose for $n \in \NN$ we have $(1+x)^n \geq 1+nx$, we will show this implies $(1+x)^{n+1} \geq 1+(n+1)x$. Consider:
+	$$ (1+x)^{n+1} = (1+x)(1+x)^{n} \geq (1+x)(1+nx) = 1 + x + nx + nx^2$$
+	$$ = 1 + (n+1)x + \underbrace{nx^2}_{\geq 0} \geq 1 + (n+1)x$$
+	\begin{flushright}
+		$\square$
+	\end{flushright}
+	
+	\section{\large Discrete Structures}
+		\subsection*{Definitions}
+		\begin{def_}
+			A graph $\mathcal{G}$ of elements in $X$ is a subset of $X$ denoted $\G$  is a set $V$ of points in $X$ together with a set $E$ of ordered pairs connecting each vertex in $V$. If this is the case, then we write $\G=(V,E)$.
+		\end{def_}
+		
+		\noindent Remark: an edge $e \in E$ is a pair $(u,v) \in V \times V$.
+		\begin{ex}
+			Let $V = {a,b,c,d}$ and define $E := \{(a,b),(b,c), (c,d), (d,a) \}$ describes a square:
+			\begin{center}
+				\begin{tikzpicture}
+				\draw (0,0) -- (0,2) -- (2,2) -- (2,0) -- (0,0);
+				\node[above right] at (0,0) {a};
+				\node[below right] at (0,2) {b};
+				\node[below left] at (2,2) {c};
+				\node[above left] at (2,0) {d};
+				\end{tikzpicture}
+			\end{center}
+		\end{ex}
+		This discrete structure obviously has many applications, notably in transportation, communication, WWW, software, circuits and schedules. 
+		
+		\subsection*{Terminology}
+		\begin{itemize}
+			\item adjacent vertices are connected by an edge.
+			\item For a vertex $v \in V$, the degree $\mathcal{D}$ of $v$ denoted $\mathcal{D}(v) := $ number of adjacent vertices.
+			
+		\end{itemize}
+		\begin{prop}
+			Let $\mathcal{E}$ denote the number of edges of a graph $\G = (V,E)$. Then
+			$$ \sum_{v \in V} \mathcal{D}(v) \equiv 2 \cdot \mathcal{E} $$
+		\end{prop}
+		\begin{proof}
+			Let $\alpha, \beta \in V$ be two distinct but arbitrary vertices. Then by definition they are connected by some edge $\eta \in E$. Consider the vertex $\alpha$, then $\mathcal{D}(\alpha) = \sum_{\text{edges $e$ of } \alpha} e$. Similarly, $\mathcal{D}(\beta) =  \sum_{\text{edges $\tilde{e}$ of } \beta} \tilde{e}$. Now each sum will include $\eta$ and thus $\eta$ will be counted exactly twice. To see this, suppose instead it it counted $n > 2$ times. Then it must connect $n > 2$ nodes which contradicts the structure of a graph. \\  \\
+			Hence since we chose $\alpha, \beta$ arbitrarily we conclude$ \sum_{v \in V} \mathcal{D}(v) \equiv 2 \cdot \mathcal{E} $.
+		\end{proof}
+		
+		\begin{def_}
+			Let $\G = (V,E)$ be a graph. A \underline{path} is a sequence of vertices $\{v_1, v_2, ... v_k \} \subseteq V$ such that for any $i \in [1,k]\bigcap \mathbb{N}$, the vertices $v_i \wedge v_{i+1}$ are adjacent. \\ \\
+			Moreover, if each element in $\{v_1, v_2, ... v_k \}$ is distinct (i.e not repeated) then we call the path \underline{simple}.
+		\end{def_}
+		
+		\begin{def_}
+			A cycle is a simple path with the added condition that the final vertex is the first vertex.
+		\end{def_}
+		\begin{def_}
+			A connected graph is a graph $\G = (V,E)$ such that for any two vertices $u,v \in V$ there exists a path $\mathcal{P}$ connecting $u$ and $v$. \\ \\
+			Whence we define a subgraph as a subset of the original graph. So, given a graph $\G = (V,E)$ we could define a subgraph $\mathcal{Q} = (W,F) \subset \G$. A connected component is simply a connected subgraph $\mathcal{Q}$ of $\G$.
+		\end{def_}
+		
+		
+		\begin{def_}
+			A (free) tree is a connected graph \textbf{without} cycles. A forest is a collection of trees.
+		\end{def_}
+		
+		\subsection*{Connectivity}
+		
+		We say a graph is complete if all pairs of vertices are adjacent. 
+		\begin{prop}
+			Let $\G$ be a complete graph and $n = \#$ of vertices and $m = \#$ of edges of a graph $\G=(V,E)$. Then
+			\begin{equation}
+			m = \frac{1}{2} \sum_{v \in V} \mathcal{D}(v) = \frac{1}{2} \sum_{v \in V} (n-1) = \frac{n(n-1)}{2}
+			\end{equation}
+		\end{prop}
+		\begin{proof}
+			The proof is given in the statement, I simply wish to make a remark. This relation holds because each of the $n$ vertices is incident to exactly $n-1$ edges!
+		\end{proof}
+		\begin{ex} 
+			For a tree $m=n-1$
+			$$ $$
+			\begin{center}
+				\begin{tikzpicture}
+				[scale=.8,auto=left,every node/.style={circle,fill=blue!20}]
+				\node (n4) at (4,8)  {4};
+				\node (n5) at (8,9)  {5};
+				\node (n1) at (11,8) {1};
+				\node (n2) at (9,6)  {2};
+				\node (n3) at (5,5)  {3};
+				
+				\foreach \from/\to in {n4/n2,n2/n3,n2/n1,n1/n5}
+				\draw (\from) -- (\to);
+				\end{tikzpicture}
+				
+				$$ n =5, \; m = 4$$
+			\end{center}
+		\end{ex}
+		
+		\begin{ex} 
+			If $m < n-1$ then the graph $\G$ is not-connected.
+			$$ $$
+			\begin{center}
+				\begin{tikzpicture}
+				[scale=.6,auto=left,every node/.style={circle,fill=blue!20}]
+				\node (n4) at (4,8)  {4};
+				\node (n5) at (8,9)  {5};
+				\node (n1) at (11,12) {1};
+				\node (n2) at (9,6)  {2};
+				\node (n3) at (5,5)  {3};
+				\node (n6) at (12,6)  {6};
+				
+				\foreach \from/\to in {n4/n2,n2/n3,n1/n5, n5/n6}
+				\draw (\from) -- (\to);
+				\end{tikzpicture}
+				
+				$$ n =6, \; m = 4 \implies 4=m < n-1 = 5$$
+			\end{center}
+		\end{ex}
+		\subsection*{Spanning Trees}
+		\begin{def_}
+			A spanning tree $\G$ is a subgraph which 
+			\begin{itemize}
+				\item is a tree
+				\item contains all vertices of $\G$.
+			\end{itemize}
+		\end{def_}
+		
+		\noindent Let us now discuss some properties of a graph container (or some similar ADT). Let $\G = (V,E)$ be a graph and let $v,w \in V$ and $e \in E$ and $o$ be some object. \\ \\
+		
+		\begin{tabular}{ | c | c|c | c |}
+			\hline 
+			Method & Return  & Method & Return \\
+			\hline
+			$size()$ & \# vertices + \# edges of $\G$ & isEmpty() & boolean \\
+			elements() & \# vertices ? & positions() & ?? \\
+			swap() & ?? & replaceElement() & ?? \\
+			\hline
+			numVertices() & returns \# of vertices of $\G$ & numEdges() & \# of edges \\
+			vertices() & enum of vertices & edges() & enum of edges \\
+			directedEdges() & enum of all directed edges & undirectedEdges() & $\oint$\\
+			incidentEdges(v) & enum of edges incident to $v$ & inIncidentEdges(v) &  incoming edges to $v$ \\
+			outIncidentEdges(v) & enum of outgoing edges from $v$ & opposite(v,e) & Endpoint of $e \neq v$ \\
+			degree(v) &$ \mathcal{D}(v)$ & inDegree(v) & outDegree of v \\
+			outDegree(v) & out-degree & adjacentVertices(v) & adjacent vertices to $v$ \\
+			inAdjacent(v) & $\{ w \}$ along incoming & outAdjacentVertices(v) & ""\\
+			\hline
+		\end{tabular}
+		
+		A tree represents a hierarchy. Examples are the UNIX/DOS filesystem. Now, some terminology. Consider the following tree:
+		
+		\begin{center}
+			\begin{tikzpicture}
+			[scale=.6,auto=left,every node/.style={circle,fill=blue!20}]
+			\node (n2) at (4,8)  {B};
+			\node (n3) at (8,8)  {C};
+			\node (n4) at (2,6)  {D};
+			\node (n5) at (4,6)  {E};
+			
+			\node (n6) at (8,6)  {F};
+			\node (n7) at (10,6)  {G};
+			\node (n1) at (6,9)  {A};
+			
+			\foreach \from/\to in {n1/n2, n1/n3, n2/n4, n2/n5, n3/n6, n3/n7}
+			\draw (\from) -- (\to);
+			\end{tikzpicture}
+		\end{center}
+		\begin{itemize}
+			\item $A$ is the root node and $B$ is the parents of $D$ and E.
+			\item C is the sibling of B. D,E,F,G are external-nodes/leaves.
+			\item the depth of $E$ is 2.
+			\item The height of the tree is 2.
+			\item the Degree of node $B$ is 2.
+		\end{itemize}
+		
+		\subsection*{Binary Trees}
+		
+		\begin{def_}
+			(Recursive definition of B-tree) A binary tree is either an external node (leaf) or an internal node (root) with two (left and right) binary sub-trees.
+		\end{def_}
+		\begin{ex}
+			Arithmetic expression or decision tree.
+		\end{ex}
+		Here are some simple properties of a binary tree:
+		\begin{itemize}
+			\item Nodes have ordered children.
+			\item ALL internal nodes have a degree of 2.
+			\item \# of external nodes = \# internal nodes + 1
+			\item \# of nodes at level $i \leq 2^i$. Where $0 \leftrightarrow$ root $(2^0 = 1)$.
+			\item \# of external nodes $\leq 2^{\text{height}}$
+			\item height $\geq \log_2{\left(\text{\# external nodes}\right)}$
+			\item height $\geq \log_2{\text{(\# nodes -1)}}$
+			\item height $\leq \#$ internal nodes = (\#nodes -1)/2
+		\end{itemize}
+		
+		\subsection{Searching Through Trees}
+		Depending on the tree, many different searching algorithms are possible. Many are based on two basic and fundamental algorithms, called \emph{Depth-First-Search} and \emph{Breadth-First-Search} appropriately. The former will explore the maze while tagging previously visited nodes, going down paths until the desired element is found or the end of the path is reached. The latter will instead check nodes at the start of each path whilst expanding outwards. The algorithms are given below:
+		\begin{lstlisting}
+class Node<T> overrides Node<T> {
+	boolean tagged;
+}
+
+boolean depthFirstSearch(Node<T> start, T search) {
+	if (start.equals(search))
+		return true
+	else {
+		Note<T>[] children = start.children;
+		boolean found = false;
+		for (int i = 0; i < children.length; i++) {
+			if (!children[i].tagged)
+				found |= depthFirstSearch(children[i], search);
+			children[i].tagged = true;
+		}
+		return found;
+	}
+}
+
+boolean breadthFirstSearch(Node<T> start, T search) {
+	if (start.equals(search))
+		return true;
+	Queue<T> queue = new Queue<T>(start);
+	Node<T> top = new Node<T>();
+	while (!queue.isEmpty()) {
+		top = queue.pop();
+		top.tagged = true;
+		if (top.equals(search))
+			return true
+		for (Node<T> n : top.children) 
+			if (n.tagged == false)
+			  queue.pop(n);
+		
+	}
+	return false;
+}
+
+		\end{lstlisting}
+		Equipped with these new concepts we will move onto Binary Search Trees and their algorithms.
+	\begin{def_}
+		A binary search tree is a tree such that the left children of a node all have keys less than or equal to that node, and the right children all have keys greater than or equal to it.
+	\end{def_}
+	 Consider a tree containing a subset of some orderable $\T$. We consider an algorithm that seaches for some $z \in \T$ in this tree. The set have order operations is absolutely crucial, since otherwise one would be unable to construct a binary search tree from the set, as each node must have a numerical key associated to the item. Moreover, we must be able to make comparisons to determine where we should continue the search. In fact, this is what will allow us to search for an item $\tau$ in $\mathcal{O}(\log{n})$ time.
+	 \begin{lstlisting}
+boolean bstContains(Node<T> root, T target)  {
+	if (root.key ==  target.key)
+		return true;
+	else if (root.children == null)
+		return false;
+	
+	else {
+		if (root.key > target.key)
+			return bstContains(root.leftChild(), target);
+		else if (root.key < target.ket)
+			return bstContains(root.rightChild, target);
+	}
+	
+}
+
+Node<T> bstSearch(Node<T> root, T target)  {
+	if (root.key ==  target.key)
+		return root;
+	else {
+		if (root.children == null)
+			return root; // this is an external node
+		else if (root.key > target.key)
+			return bstSearch(root.leftChild(), target);
+		else if (root.key < target.key)
+			return bstSearch(root.RightChild(), target);
+	}
+}
+
+	 \end{lstlisting}
+	 Insertion is somewhat less straightforward, consider a pair $(e,k)$ where $k$ is the key of some object $e$. Let $w = bstSearch(root, e)$. If $w$ is external, we can simply set it to be $(e,k)$ and generate empty children. However, if it is an internal node, then this implies the existence of some other node in the graph with the same key.
+\end{document}
