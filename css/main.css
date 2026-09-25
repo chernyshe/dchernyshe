@@ -703,3 +703,46 @@ div.accountInfo {
     border-color: var(--btn-hover-border);
     color: var(--heading-color);
 }
+.credential-box {
+    background-color: var(--repo-group-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 6px;
+    padding: 0.85rem 1.1rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.92rem;
+}
+
+.credential-main {
+    margin-bottom: 0.4rem;
+}
+
+.credential-degree {
+    font-weight: 700;
+    color: var(--heading-color);
+}
+
+.credential-sep {
+    color: var(--pub-author-sep);
+    margin: 0 0.35rem;
+}
+
+.credential-org {
+    color: var(--text-color);
+}
+
+.credential-details {
+    color: var(--pub-meta);
+    font-size: 0.88rem;
+    line-height: 1.45;
+}
+
+.credential-label {
+    font-weight: 600;
+    color: var(--resource-label);
+    margin-right: 0.3rem;
+}
+
+.credential-thesis-link {
+    color: var(--btn-accent-text);
+    font-weight: 500;
+}
